@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
-/// The EZEmailField is a pre-configured TextFormField designed specifically
-/// for collecting and validating email addresses.
+/// A pre-configured [TextFormField] designed specifically for collecting and validating email addresses.
+///
+/// Features:
+/// *   **Built-in Validation:** Uses a robust regex to validate email formats automatically.
+/// *   **Customizable:** Supports custom validators, regex, and full [InputDecoration] styling.
+/// *   **Developer Friendly:** Handles common boilerplate like keyboard type and text input action.
 class EZEmailField extends StatefulWidget {
   /// The text to display as the field's label. Defaults to 'Email'.
   final String labelText;
@@ -21,9 +25,7 @@ class EZEmailField extends StatefulWidget {
   /// Custom decoration to override the default styling.
   final InputDecoration? decoration;
 
-  // ----------------------------------------------------------------------
-  // New Customization Properties
-  // ----------------------------------------------------------------------
+  // --- Customization Properties ---
 
   /// Optional custom validator function. If provided, it overrides the default email validation.
   final FormFieldValidator<String>? customValidator;
