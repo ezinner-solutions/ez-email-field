@@ -66,16 +66,17 @@ class _EmailFormScreenState extends State<EmailFormScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 8),
-              const EZEmailField(),
+              const EzEmailField(),
               const Divider(height: 32),
               const Text(
-                '2. Custom Styling & Label',
+                '2. Clear Button & Custom Styling',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 8),
-              const EZEmailField(
+              const EzEmailField(
                 labelText: 'Work Email',
                 hintText: 'john.doe@company.com',
+                showClearButton: true,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.work_outline),
@@ -88,14 +89,15 @@ class _EmailFormScreenState extends State<EmailFormScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 8),
-              EZEmailField(
+              EzEmailField(
                 controller: _controller,
-                customValidator: (value) {
+                validator: (value) {
                   if (value != null && !value.endsWith('@ezinner.com')) {
                     return 'Must be an @ezinner.com email address';
                   }
                   return null;
                 },
+                showClearButton: true,
                 decoration: const InputDecoration(
                   labelText: 'Corporate Email',
                   helperText: 'Must end with @ezinner.com',
