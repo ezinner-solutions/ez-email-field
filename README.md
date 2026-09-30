@@ -4,7 +4,6 @@ A drop-in Flutter `TextFormField` specifically designed for email input with bui
 
 [![pub package](https://img.shields.io/pub/v/ez_email_field.svg)](https://pub.dev/packages/ez_email_field)
 [![likes](https://img.shields.io/pub/likes/ez_email_field.svg)](https://pub.dev/packages/ez_email_field)
-[![popularity](https://img.shields.io/pub/popularity/ez_email_field.svg)](https://pub.dev/packages/ez_email_field)
 [![pub points](https://img.shields.io/pub/points/ez_email_field.svg)](https://pub.dev/packages/ez_email_field)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
