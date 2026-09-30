@@ -1,96 +1,137 @@
 # EzEmailField
 
-A pre-configured, self-validating Flutter text field specifically designed for email input with built-in RFC 5322 validation, auto-trimming, mobile autofill, and quick clear support.
+A drop-in Flutter `TextFormField` specifically designed for email input with built-in RFC 5322 validation, auto-trimming, mobile autofill, and quick clear support.
 
-## 🛑 The Problem
+[![pub package](https://img.shields.io/pub/v/ez_email_field.svg)](https://pub.dev/packages/ez_email_field)
+[![likes](https://img.shields.io/pub/likes/ez_email_field.svg)](https://pub.dev/packages/ez_email_field)
+[![popularity](https://img.shields.io/pub/popularity/ez_email_field.svg)](https://pub.dev/packages/ez_email_field)
+[![pub points](https://img.shields.io/pub/points/ez_email_field.svg)](https://pub.dev/packages/ez_email_field)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Implementing email fields repeatedly in Flutter involves:
-1. **Regex Boilerplate:** Copy-pasting regex patterns into every form.
-2. **Whitespace Bugs:** Trailing spaces from mobile keyboard auto-correct or paste causing valid user emails to fail validation.
-3. **Missing Autofill:** Forgetting `autofillHints`, preventing iOS/Android/password managers from suggesting saved emails.
-4. **Boilerplate Clear Buttons & Styling:** Writing custom state management just to show/hide a clear button and styling borders.
+## Problem Statement
 
-## ✅ The EzEmailField Solution
+Implementing email fields repeatedly in Flutter requires boilerplate that is prone to common edge-case defects:
 
-`EzEmailField` provides a complete drop-in replacement for `TextFormField` with smart email defaults:
+1. **Regex Errors & Copy-Paste Defects:** Writing or finding regex patterns that comply with standard email formatting while handling domain lengths and international characters.
+2. **Whitespace Bugs:** Mobile keyboards often insert trailing whitespace when using autocomplete, voice dictation, or clipboard paste, causing valid emails to fail validation.
+3. **Missing OS Autofill:** Forgetting `autofillHints: const [AutofillHints.email]` breaks password managers and OS credential managers on iOS, Android, and web.
+4. **Boilerplate Clear Buttons:** Managing text editing controllers and state just to toggle a clear button icon on text entry.
 
-* **Zero-Config Validation:** Validates emails out of the box with an optimized RFC 5322-compatible regex.
-* **Auto-trimming:** Automatically trims leading/trailing whitespace during validation and submission so users aren't tripped up by pasted spaces.
-* **Mobile Autofill:** Pre-configured with `AutofillHints.email` for native autofill on iOS and Android.
-* **Quick Clear Button:** Optional `showClearButton` toggle that displays a clear suffix icon when text is entered.
-* **Drop-in Parity:** Supports all standard `TextFormField` properties (`validator`, `initialValue`, `focusNode`, `autovalidateMode`, `onSaved`, `inputFormatters`, etc.).
-* **Backwards Compatible:** Includes `EZEmailField` alias so existing code continues to work seamlessly.
+### Targeted Error Signatures & Defects
+* `"Invalid email address"` / `"Enter a valid email"`
+* False negative validation errors caused by pasted trailing whitespace
+* Missing browser and OS password manager suggestions (`AutofillHints.email`)
 
-## 📦 Installation
+## Technical Solution
+
+`EzEmailField` provides a complete drop-in replacement for `TextFormField` pre-configured with robust email defaults:
+
+1. **Built-in RFC 5322 Validation:** Validates email format automatically using a thoroughly tested, performant regular expression.
+2. **Automated Whitespace Trimming:** Automatically strips leading and trailing whitespace before validation and submission.
+3. **Mobile Autofill Integration:** Configured with `AutofillHints.email` out of the box for iOS, Android, and web autofill services.
+4. **Dynamic Clear Suffix Button:** Optional `showClearButton` toggle displaying a clear button when text is present.
+5. **100% Drop-in Parity:** Supports all standard `TextFormField` properties (`validator`, `initialValue`, `focusNode`, `autovalidateMode`, `onSaved`, `inputFormatters`, etc.).
+6. **Alias Support:** Includes `EZEmailField` typedef for backwards compatibility.
+
+## Installation
 
 ```shell
 flutter pub add ez_email_field
 ```
 
-## 🚀 Usage
+## Quick Migration
 
-### Basic Usage
+Replace standard `TextFormField` with `EzEmailField`:
 
-```dart
-EzEmailField(
-  onChanged: (email) => print('Typed: $email'),
-)
+```diff
+- TextFormField(
+-   keyboardType: TextInputType.emailAddress,
+-   validator: (val) => val != null && !RegExp(r'...').hasMatch(val) ? 'Invalid email' : null,
++ EzEmailField(
+    onSaved: (email) => _email = email,
+  )
 ```
 
-### Inside a Form with Clear Button & Validation
+## Usage Examples
+
+### 1. Basic Form Integration
 
 ```dart
 Form(
   key: _formKey,
-  autovalidateMode: AutovalidateMode.onUserInteraction,
   child: Column(
     children: [
       EzEmailField(
-        labelText: 'Work Email',
+        labelText: 'Email Address',
         showClearButton: true,
-        onSaved: (email) => _saveEmail(email),
+        onSaved: (val) => _email = val,
       ),
-      FilledButton(
+      ElevatedButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
             _formKey.currentState!.save();
           }
         },
-        child: const Text('Continue'),
+        child: const Text('Submit'),
       ),
     ],
   ),
 )
 ```
 
-### Custom Error Messages
+### 2. Custom Error Messages
 
 ```dart
 EzEmailField(
   requiredMessage: 'Please enter your email address to continue',
-  invalidEmailMessage: 'The email address format looks incorrect',
+  invalidEmailMessage: 'The provided email address is not in a valid format',
 )
 ```
 
-### Custom Validation Logic
+### 3. Custom Domain Validation
 
-Override default validation with domain restrictions or custom rules using `validator` (or `customValidator`):
+Add extra rules on top of the built-in email format validation:
 
 ```dart
 EzEmailField(
-  validator: (value) {
-    if (value == null || !value.endsWith('@company.com')) {
-      return 'Must be a @company.com email address';
+  validator: (email) {
+    if (email != null && !email.endsWith('@company.com')) {
+      return 'Only @company.com email addresses are permitted';
     }
     return null;
   },
 )
 ```
 
-## 🤝 Contributing
+## API Reference
 
-Contributions, issues, and feature suggestions are always welcome! Check out the [GitHub repository](https://github.com/Evgenii-Zinner/ez-email-field).
+| Property | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `controller` | `TextEditingController?` | `null` | Controls the text being edited. |
+| `initialValue` | `String?` | `null` | Initial text value when no controller is provided. |
+| `focusNode` | `FocusNode?` | `null` | Defines keyboard focus for the field. |
+| `labelText` | `String?` | `'Email'` | Label text for input decoration. |
+| `hintText` | `String?` | `null` | Hint text suggesting accepted format. |
+| `required` | `bool` | `true` | Whether the field is required. |
+| `requiredMessage` | `String?` | `null` | Error message when required field is empty. |
+| `invalidEmailMessage` | `String` | `'Invalid email address'` | Error message when format check fails. |
+| `showClearButton` | `bool` | `false` | Displays a clear icon button when text is entered. |
+| `validator` | `FormFieldValidator<String>?` | `null` | Custom validator executed after built-in email validation passes. |
+| `onChanged` | `ValueChanged<String>?` | `null` | Callback when text value changes. |
+| `onSaved` | `FormFieldSetter<String>?` | `null` | Callback when enclosing form is saved. |
+| `onFieldSubmitted` | `ValueChanged<String>?` | `null` | Callback when user presses the action button. |
+| `autovalidateMode` | `AutovalidateMode?` | `null` | Autovalidation trigger mode. |
+| `enabled` | `bool?` | `null` | Whether the input is enabled. |
+| `readOnly` | `bool` | `false` | Whether the field is read-only. |
+| `autofillHints` | `Iterable<String>?` | `[AutofillHints.email]` | Autofill hints for mobile/browser credential managers. |
 
-## 📜 License
+## Sponsoring & Support
 
-MIT License - see [LICENSE](LICENSE) for details.
+If this package saved you debugging time, consider supporting ongoing maintenance:
+* [GitHub Sponsors](https://github.com/sponsors/Evgenii-Zinner/)
+* [Thanks.dev](https://thanks.dev/u/gh/evgenii-zinner)
+* [Buy Me a Coffee](https://buymeacoffee.com/evgeniizinner)
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.

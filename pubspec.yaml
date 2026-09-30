@@ -1,5 +1,5 @@
 name: ez_email_field
-description: A pre-validated, highly customizable email text field with built-in regex and error handling.
+description: A drop-in Flutter TextFormField for email input with built-in RFC 5322 validation, auto-trimming, mobile autofill, and clear button support.
 version: 0.0.3
 homepage: https://github.com/Evgenii-Zinner/ez-email-field
 repository: https://github.com/Evgenii-Zinner/ez-email-field
@@ -10,7 +10,7 @@ topics:
   - ez-flutter
   - email
   - form
-  - input
+  - validation
 funding:
   - https://github.com/sponsors/Evgenii-Zinner/
   - https://thanks.dev/u/gh/evgenii-zinner
